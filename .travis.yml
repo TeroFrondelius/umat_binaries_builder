@@ -1,0 +1,39 @@
+language: julia
+os:
+  - linux
+julia:
+  - 1.0
+notifications:
+  email: false
+git:
+  depth: 99999999
+cache:
+  timeout: 1000
+  directories:
+    - downloads
+env:
+  global:
+    - BINARYBUILDER_DOWNLOADS_CACHE=downloads
+    - BINARYBUILDER_AUTOMATIC_APPLE=false
+sudo: required
+
+# Before anything else, get the latest versions of things
+before_script:
+  - julia -e 'using Pkg; pkg"add BinaryProvider"; pkg"add BinaryBuilder#master"; Pkg.build()'
+
+script:
+  - julia build_tarballs.jl
+
+
+deploy:
+    provider: releases
+    api_key:
+        # Note; this api_key is only valid for TeroFrondelius/umat_binaries_builder; you need
+        # to make your own: https://docs.travis-ci.com/user/deployment/releases/
+        secure: dhN4pop/DhUHXhQnjcnLXhFO9eM5YO10y+jceaGh8oCkKtYb3L5j9HBgTzrUe0obTYU53zmspeeg04G3vL5Mq6LbDaH0579J/n9YvaFfXrWSBCHnU2C7TwYwo9W5OyH+5I6IaJg1xCJhFPYwwbfd96fQ8dxreG+WTweQL8FuvoFt9eRC10qbxSgtYu2s6LvwXdiOjSfQyJ8m3v71zxBhfQ8Pa9xfvJz+HYlk0FfXZnN89RNB+03uM4uPtvrmU4HzV2rZjFqZ3UPnZt0wYnu91aWnFwC5Enrn2TM4ToPSSBBSQ7+fWX4gV+ZsN8NbdUr5AP0fnwn5e0PGOpXkfTiIV4HA7BVBdDvcspiJFZ/FBiimCN9ea2QFx4Pe0kweoBEvfesjf0pKT594ZTVyWyNCylfqKDCNauuPV+5TSa47g+CQufPxrburGE3ScZwTtJB1ePhGLSnXauXjmNfseLfTcW+R7Il5jmCPVGUrrR6txrlWfnEb2gAqx+7eTOIfhEUto3cQNe3OX9jOzZ0BXY9FRMlg2Ie9PFeDWIwpa1IkQ6pYjl7uf/9HwRFeyLeOm+eCCRk0fh2I+Scyk8AS1cMiaq4NsExA/K9kfR1pJV+9s6cXUm9HVZT6TANUW0V1yft7r8ZKy//9knxkei7ChJSV0HpHvDUYlaSle/ghZt3nQAE=
+    file_glob: true
+    file: products/*
+    skip_cleanup: true
+    on:
+        repo: TeroFrondelius/umat_binaries_builder
+        tags: true
