@@ -7,11 +7,14 @@ version = v"0.1.0"
 
 # Collection of sources required to build umat_binaries
 sources = [
-    "https://raw.githubusercontent.com/KratosMultiphysics/Kratos/master/applications/constitutive_laws_application/custom_external_libraries/umat/mises_umat.f" =>
+    "https://raw.githubusercontent.com/KratosMultiphysics/Kratos/80d68b9a7e89d97438fd04726e5198084b7be43e/applications/constitutive_laws_application/custom_external_libraries/umat/mises_umat.f" =>
     "bfb0f46ae0c9cef0cc91c1dbf78943dd7afd24a5a757dd3224ed66cdd71e7ec6",
 
-    "https://raw.githubusercontent.com/KratosMultiphysics/Kratos/master/applications/constitutive_laws_application/custom_external_libraries/umat/ABA_PARAM.INC" =>
+    "https://raw.githubusercontent.com/KratosMultiphysics/Kratos/80d68b9a7e89d97438fd04726e5198084b7be43e/applications/constitutive_laws_application/custom_external_libraries/umat/ABA_PARAM.INC" =>
     "b7d74a332dda559e06720db8b7f907aedb72f58b8ed957c7c67ba7007a8e93a8",
+
+    "https://raw.githubusercontent.com/KratosMultiphysics/Kratos/80d68b9a7e89d97438fd04726e5198084b7be43e/applications/constitutive_laws_application/custom_external_libraries/umat/xit.f" =>
+    "14f74acd4a20ad680b0c354416f302e5f2e078f3a5750df60888b9b41cb887a5"
 
 ]
 
@@ -23,7 +26,7 @@ cmake_minimum_required(VERSION 3.5)
 project(Umat)
 set(VERSION 0.1.0)
 enable_language(Fortran)
-set(SOURCE_FILES mises_umat.f)
+set(SOURCE_FILES mises_umat.f xit.f)
 set(LIBRARY_NAME mises_umat)
 add_library(\${LIBRARY_NAME} SHARED \${SOURCE_FILES})
 install(TARGETS mises_umat DESTINATION lib)
@@ -39,6 +42,9 @@ make install
 # These are the platforms we will build for by default, unless further
 # platforms are passed in on the command line
 platforms = [
+    Windows(:x86_64),
+    MacOS(:x86_64),
+    Windows(:i686),
     Linux(:i686, libc=:glibc),
     Linux(:x86_64, libc=:glibc),
     Linux(:aarch64, libc=:glibc),
@@ -51,6 +57,8 @@ platforms = [
     FreeBSD(:x86_64)
 ]
 
+platforms = expand_gcc_versions(platforms)
+
 # The products that we will ensure are always built
 products(prefix) = [
     LibraryProduct(prefix, "libmises_umat", :mises_umat)
@@ -58,9 +66,8 @@ products(prefix) = [
 
 # Dependencies that must be installed before this package can be built
 dependencies = [
-    
+
 ]
 
 # Build the tarballs, and possibly a `build.jl` as well.
 build_tarballs(ARGS, name, version, sources, script, platforms, products, dependencies)
-
