@@ -14,7 +14,10 @@ sources = [
     "b7d74a332dda559e06720db8b7f907aedb72f58b8ed957c7c67ba7007a8e93a8",
 
     "https://raw.githubusercontent.com/KratosMultiphysics/Kratos/80d68b9a7e89d97438fd04726e5198084b7be43e/applications/constitutive_laws_application/custom_external_libraries/umat/xit.f" =>
-    "14f74acd4a20ad680b0c354416f302e5f2e078f3a5750df60888b9b41cb887a5"
+    "14f74acd4a20ad680b0c354416f302e5f2e078f3a5750df60888b9b41cb887a5",
+
+    "https://sourceforge.net/code-snapshots/svn/p/pa/parafem/code/parafem-code-r2281-trunk-parafem-src-umats-dp.zip" =>
+    "114d5773e806de0070eee7379131ceae25c3516fb49b8e3fb8f0f9e1926717bf"
 
 ]
 
@@ -28,14 +31,28 @@ set(VERSION 0.1.0)
 enable_language(Fortran)
 set(SOURCE_FILES mises_umat.f xit.f)
 set(LIBRARY_NAME mises_umat)
+
 add_library(\${LIBRARY_NAME} SHARED \${SOURCE_FILES})
+add_library(elastic SHARED elastic.f)
+add_library(isotropic_plast_exp SHARED isotropic_plast_exp.f)
+add_library(isotropic_plast_imp SHARED isotropic_plast_imp.f)
+
 install(TARGETS mises_umat DESTINATION lib)
+install(TARGETS elastic DESTINATION lib)
+install(TARGETS isotropic_plast_exp DESTINATION lib)
+install(TARGETS isotropic_plast_imp DESTINATION lib)
 EOL
+
+export dp=parafem-code-r2281-trunk-parafem-src-umats-dp
+cp $dp/elasticity/elastic.f .
+cp $dp/plasticity_exp/code_exp.f isotropic_plast_exp.f
+cp $dp/plasticity_imp/code_imp.f isotropic_plast_imp.f
+
+sed -i -e '1i\       IMPLICIT REAL*8(A-H,O-Z)' ABA_PARAM.INC
 
 cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=/opt/$target/$target.toolchain
 make
 make install
-
 
 """
 
@@ -61,7 +78,11 @@ platforms = expand_gcc_versions(platforms)
 
 # The products that we will ensure are always built
 products(prefix) = [
-    LibraryProduct(prefix, "libmises_umat", :mises_umat)
+    LibraryProduct(prefix, "libmises_umat", :mises_umat),
+    LibraryProduct(prefix, "libelastic", :elastic),
+    LibraryProduct(prefix, "isotropic_plast_exp", :isotropic_plast_exp),
+    LibraryProduct(prefix, "isotropic_plast_imp", :isotropic_plast_imp),
+    LibraryProduct(prefix, "visco_imp", :visco_imp)
 ]
 
 # Dependencies that must be installed before this package can be built
