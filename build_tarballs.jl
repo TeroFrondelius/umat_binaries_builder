@@ -37,6 +37,8 @@ install(TARGETS mises_umat DESTINATION lib)
 install(TARGETS umatcrystal_mod DESTINATION lib)
 EOL
 
+cp ABA_PARAM.INC aba_param.inc
+
 cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=/opt/$target/$target.toolchain
 make
 make install
