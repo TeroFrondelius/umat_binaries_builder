@@ -3,7 +3,7 @@
 using BinaryBuilder
 
 name = "umat_binaries"
-version = v"0.1.0"
+version = v"0.3.0"
 
 # Collection of sources required to build umat_binaries
 sources = [
@@ -14,7 +14,10 @@ sources = [
     "b7d74a332dda559e06720db8b7f907aedb72f58b8ed957c7c67ba7007a8e93a8",
 
     "https://raw.githubusercontent.com/KratosMultiphysics/Kratos/80d68b9a7e89d97438fd04726e5198084b7be43e/applications/constitutive_laws_application/custom_external_libraries/umat/xit.f" =>
-    "14f74acd4a20ad680b0c354416f302e5f2e078f3a5750df60888b9b41cb887a5"
+    "14f74acd4a20ad680b0c354416f302e5f2e078f3a5750df60888b9b41cb887a5",
+
+    "http://www.columbia.edu/~jk2079/fem/umatcrystal_mod.f" =>
+    "e0e5384d958020622e66ed6520d28bce34517a5f3f2be3f2485a5a8fb6e2f6b6"
 
 ]
 
@@ -29,8 +32,12 @@ enable_language(Fortran)
 set(SOURCE_FILES mises_umat.f xit.f)
 set(LIBRARY_NAME mises_umat)
 add_library(\${LIBRARY_NAME} SHARED \${SOURCE_FILES})
+add_library(umatcrystal_mod SHARED umatcrystal_mod.f)
 install(TARGETS mises_umat DESTINATION lib)
+install(TARGETS umatcrystal_mod DESTINATION lib)
 EOL
+
+cp ABA_PARAM.INC aba_param.inc
 
 cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=/opt/$target/$target.toolchain
 make
