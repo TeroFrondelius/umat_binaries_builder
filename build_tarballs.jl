@@ -80,9 +80,8 @@ platforms = expand_gcc_versions(platforms)
 products(prefix) = [
     LibraryProduct(prefix, "libmises_umat", :mises_umat),
     LibraryProduct(prefix, "libelastic", :elastic),
-    LibraryProduct(prefix, "isotropic_plast_exp", :isotropic_plast_exp),
-    LibraryProduct(prefix, "isotropic_plast_imp", :isotropic_plast_imp),
-    LibraryProduct(prefix, "visco_imp", :visco_imp)
+    LibraryProduct(prefix, "libisotropic_plast_exp", :isotropic_plast_exp),
+    LibraryProduct(prefix, "libisotropic_plast_imp", :isotropic_plast_imp)
 ]
 
 # Dependencies that must be installed before this package can be built
