@@ -16,7 +16,11 @@ sources = [
     "https://raw.githubusercontent.com/KratosMultiphysics/Kratos/80d68b9a7e89d97438fd04726e5198084b7be43e/applications/constitutive_laws_application/custom_external_libraries/umat/xit.f" =>
     "14f74acd4a20ad680b0c354416f302e5f2e078f3a5750df60888b9b41cb887a5",
 
-    "https://sourceforge.net/code-snapshots/svn/p/pa/parafem/code/parafem-code-r2281-trunk-parafem-src-umats-dp.zip" =>
+    #"https://sourceforge.net/code-snapshots/svn/p/pa/parafem/code/parafem-code-r2281-trunk-parafem-src-umats-dp.zip" =>
+    #"114d5773e806de0070eee7379131ceae25c3516fb49b8e3fb8f0f9e1926717bf"
+
+    # The above is the original but for some reason sourceforge blogged the trafic
+    "https://github.com/TeroFrondelius/umat_binaries_builder/releases/download/v0.3.1/parafem-code-r2281-trunk-parafem-src-umats-dp.zip" =>
     "114d5773e806de0070eee7379131ceae25c3516fb49b8e3fb8f0f9e1926717bf"
 
 ]
