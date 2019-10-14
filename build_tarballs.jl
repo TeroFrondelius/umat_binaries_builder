@@ -21,7 +21,11 @@ sources = [
 
     # The above is the original but for some reason sourceforge blogged the trafic
     "https://github.com/TeroFrondelius/umat_binaries_builder/releases/download/v0.3.1/parafem-code-r2281-trunk-parafem-src-umats-dp.zip" =>
-    "114d5773e806de0070eee7379131ceae25c3516fb49b8e3fb8f0f9e1926717bf"
+    "114d5773e806de0070eee7379131ceae25c3516fb49b8e3fb8f0f9e1926717bf",
+
+    # Gurson model from UMAT.jl/umat_models
+    "https://github.com/JuliaFEM/UMAT.jl.git" =>
+    "0225216125884a4a9439d5444221be450e9d9212"
 
 ]
 
@@ -58,16 +62,34 @@ cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=/opt/$target/$target
 make
 make install
 
+# From this forward is Gurson model building
+cd UMAT.jl/umat_models
+
+cat >CMakeLists.txt <<EOL
+cmake_minimum_required(VERSION 3.5)
+project(Umat)
+set(VERSION 0.1.0)
+enable_language(Fortran)
+set(CMAKE_Fortran_FLAGS "-fdefault-real-8")
+add_library(gurson_porous_plasticity SHARED gurson_porous_plasticity.f90)
+target_link_libraries(gurson_porous_plasticity openblas64_)
+install(TARGETS gurson_porous_plasticity DESTINATION lib)
+EOL
+
+cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=/opt/$target/$target.toolchain
+make
+make install
+
 """
 
 # These are the platforms we will build for by default, unless further
 # platforms are passed in on the command line
 platforms = [
+    Linux(:x86_64, libc=:glibc),
     Windows(:x86_64),
     MacOS(:x86_64),
     Windows(:i686),
     Linux(:i686, libc=:glibc),
-    Linux(:x86_64, libc=:glibc),
     Linux(:aarch64, libc=:glibc),
     Linux(:armv7l, libc=:glibc, call_abi=:eabihf),
     Linux(:powerpc64le, libc=:glibc),
@@ -85,12 +107,13 @@ products(prefix) = [
     LibraryProduct(prefix, "libmises_umat", :mises_umat),
     LibraryProduct(prefix, "libelastic", :elastic),
     LibraryProduct(prefix, "libisotropic_plast_exp", :isotropic_plast_exp),
-    LibraryProduct(prefix, "libisotropic_plast_imp", :isotropic_plast_imp)
+    LibraryProduct(prefix, "libisotropic_plast_imp", :isotropic_plast_imp),
+    LibraryProduct(prefix, "libgurson_porous_plasticity", :gurson_porous_plasticity)
 ]
 
 # Dependencies that must be installed before this package can be built
 dependencies = [
-
+    "https://github.com/JuliaLinearAlgebra/OpenBLASBuilder/releases/download/v0.3.0-3/build_OpenBLAS.v0.3.0.jl"
 ]
 
 # Build the tarballs, and possibly a `build.jl` as well.
