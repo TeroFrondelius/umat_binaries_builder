@@ -3,7 +3,7 @@
 using BinaryBuilder
 
 name = "umat_binaries"
-version = v"0.1.0"
+version = v"0.2.0"
 
 # Collection of sources required to build umat_binaries
 sources = [
@@ -64,6 +64,14 @@ make install
 
 # From this forward is Gurson model building
 cd UMAT.jl/umat_models
+sed -i 's/CALL ROTSIG(/!CALL ROTSIG(/g' gurson_porous_plasticity.f90
+
+if [[ ${nbits} == 64 ]]; then
+    export OB=openblas64_
+    sed -i 's/call dgesv(/call dgesv_64(/g' gurson_porous_plasticity.f90
+else
+    export OB=openblas
+fi
 
 cat >CMakeLists.txt <<EOL
 cmake_minimum_required(VERSION 3.5)
@@ -72,12 +80,9 @@ set(VERSION 0.1.0)
 enable_language(Fortran)
 set(CMAKE_Fortran_FLAGS "-fdefault-real-8")
 add_library(gurson_porous_plasticity SHARED gurson_porous_plasticity.f90)
-target_link_libraries(gurson_porous_plasticity openblas64_)
+target_link_libraries(gurson_porous_plasticity $OB)
 install(TARGETS gurson_porous_plasticity DESTINATION lib)
 EOL
-
-sed -i 's/CALL ROTSIG(/!CALL ROTSIG(/g' gurson_porous_plasticity.f90
-sed -i 's/call dgesv(/call dgesv_64(/g' gurson_porous_plasticity.f90
 
 cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=/opt/$target/$target.toolchain
 make
@@ -88,15 +93,15 @@ make install
 # These are the platforms we will build for by default, unless further
 # platforms are passed in on the command line
 platforms = [
+    Linux(:i686, libc=:glibc),
     Windows(:x86_64),
     MacOS(:x86_64),
-    Windows(:i686),
+    # Windows(:i686),
     Linux(:x86_64, libc=:glibc),
-    Linux(:i686, libc=:glibc),
     Linux(:aarch64, libc=:glibc),
     Linux(:armv7l, libc=:glibc, call_abi=:eabihf),
     Linux(:powerpc64le, libc=:glibc),
-    Linux(:i686, libc=:musl),
+    # Linux(:i686, libc=:musl),
     Linux(:x86_64, libc=:musl),
     Linux(:aarch64, libc=:musl),
     Linux(:armv7l, libc=:musl, call_abi=:eabihf),
