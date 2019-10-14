@@ -76,6 +76,9 @@ target_link_libraries(gurson_porous_plasticity openblas64_)
 install(TARGETS gurson_porous_plasticity DESTINATION lib)
 EOL
 
+sed -i 's/CALL ROTSIG(/!CALL ROTSIG(/g' gurson_porous_plasticity.f90
+sed -i 's/call dgesv(/call dgesv_64(/g' gurson_porous_plasticity.f90
+
 cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=/opt/$target/$target.toolchain
 make
 make install
@@ -85,10 +88,10 @@ make install
 # These are the platforms we will build for by default, unless further
 # platforms are passed in on the command line
 platforms = [
-    Linux(:x86_64, libc=:glibc),
     Windows(:x86_64),
     MacOS(:x86_64),
     Windows(:i686),
+    Linux(:x86_64, libc=:glibc),
     Linux(:i686, libc=:glibc),
     Linux(:aarch64, libc=:glibc),
     Linux(:armv7l, libc=:glibc, call_abi=:eabihf),
