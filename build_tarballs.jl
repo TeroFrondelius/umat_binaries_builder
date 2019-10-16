@@ -62,9 +62,11 @@ cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=/opt/$target/$target
 make
 make install
 
-# From this forward is Gurson model building
+# From this forward is UMAT.jl/umat_models building
+
 cd UMAT.jl/umat_models
 sed -i 's/CALL ROTSIG(/!CALL ROTSIG(/g' gurson_porous_plasticity.f90
+sed -i "s/'&/\' \&/g" drucker_prager_plasticity_deriv.f90
 
 if [[ ${nbits} == 64 ]]; then
     export OB=openblas64_
