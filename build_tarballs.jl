@@ -75,7 +75,6 @@ sed -i 's/CALL ROTSIG(/!CALL ROTSIG(/g' gurson_porous_plasticity.f90
 
 if [[ ${nbits} == 64 ]]; then
     export OB=openblas64_
-    export FF="-m64 -fdefault-integer-8"
     sed -i 's/call dgesv(/call dgesv_64(/g' gurson_porous_plasticity.f90
 else
     export OB=openblas
@@ -86,7 +85,7 @@ cmake_minimum_required(VERSION 3.5)
 project($name)
 set(VERSION $version)
 enable_language(Fortran)
-set(CMAKE_Fortran_FLAGS "-fdefault-real-8 $FF")
+set(CMAKE_Fortran_FLAGS "-fdefault-real-8 -fdefault-integer-8")
 add_library(gurson_porous_plasticity SHARED gurson_porous_plasticity.f90)
 target_link_libraries(gurson_porous_plasticity $OB)
 install(TARGETS gurson_porous_plasticity DESTINATION lib)
