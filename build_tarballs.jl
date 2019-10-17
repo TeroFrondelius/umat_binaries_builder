@@ -3,7 +3,7 @@
 using BinaryBuilder
 
 name = "umat_binaries"
-version = v"0.2.0"
+version = v"0.5.0"
 
 # Collection of sources required to build umat_binaries
 sources = [
@@ -25,7 +25,7 @@ sources = [
 
     # Gurson model from UMAT.jl/umat_models
     "https://github.com/JuliaFEM/UMAT.jl.git" =>
-    "0225216125884a4a9439d5444221be450e9d9212"
+    "db0046a44b2c8dfd5ca5b3212cbd6fee37f6baa3"
 
 ]
 
@@ -35,7 +35,7 @@ cd $WORKSPACE/srcdir
 cat >CMakeLists.txt <<EOL
 cmake_minimum_required(VERSION 3.5)
 project(Umat)
-set(VERSION 0.1.0)
+set(VERSION 0.5.0)
 enable_language(Fortran)
 set(SOURCE_FILES mises_umat.f xit.f)
 set(LIBRARY_NAME mises_umat)
@@ -62,7 +62,10 @@ cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=/opt/$target/$target
 make
 make install
 
-# From this forward is Gurson model building
+################################################################################
+# From this forward is UMAT.jl/umat_models building
+################################################################################
+
 cd UMAT.jl/umat_models
 sed -i 's/CALL ROTSIG(/!CALL ROTSIG(/g' gurson_porous_plasticity.f90
 
@@ -76,12 +79,15 @@ fi
 cat >CMakeLists.txt <<EOL
 cmake_minimum_required(VERSION 3.5)
 project(Umat)
-set(VERSION 0.1.0)
+set(VERSION 0.5.0)
 enable_language(Fortran)
 set(CMAKE_Fortran_FLAGS "-fdefault-real-8")
 add_library(gurson_porous_plasticity SHARED gurson_porous_plasticity.f90)
 target_link_libraries(gurson_porous_plasticity $OB)
 install(TARGETS gurson_porous_plasticity DESTINATION lib)
+
+add_library(drucker_prager_plasticity SHARED drucker_prager_plasticity.f90 drucker_prager_plasticity_deriv.f90 ../../xit.f)
+install(TARGETS drucker_prager_plasticity DESTINATION lib)
 EOL
 
 cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=/opt/$target/$target.toolchain
@@ -116,7 +122,8 @@ products(prefix) = [
     LibraryProduct(prefix, "libelastic", :elastic),
     LibraryProduct(prefix, "libisotropic_plast_exp", :isotropic_plast_exp),
     LibraryProduct(prefix, "libisotropic_plast_imp", :isotropic_plast_imp),
-    LibraryProduct(prefix, "libgurson_porous_plasticity", :gurson_porous_plasticity)
+    LibraryProduct(prefix, "libgurson_porous_plasticity", :gurson_porous_plasticity),
+    LibraryProduct(prefix, "libdrucker_prager_plasticity", :drucker_prager_plasticity)
 ]
 
 # Dependencies that must be installed before this package can be built
