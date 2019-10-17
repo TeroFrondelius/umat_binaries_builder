@@ -30,7 +30,11 @@ sources = [
 ]
 
 # Bash recipe for building across all platforms
-script = raw"""
+prefix_script = """
+export name=$name
+export version=$version
+"""
+script = prefix_script * raw"""
 cd $WORKSPACE/srcdir
 cat >CMakeLists.txt <<EOL
 cmake_minimum_required(VERSION 3.5)
