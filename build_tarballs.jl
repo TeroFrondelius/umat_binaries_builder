@@ -3,7 +3,7 @@
 using BinaryBuilder
 
 name = "umat_binaries"
-version = v"0.5.0"
+version = v"0.5.1"
 
 # Collection of sources required to build umat_binaries
 sources = [
@@ -34,8 +34,8 @@ script = raw"""
 cd $WORKSPACE/srcdir
 cat >CMakeLists.txt <<EOL
 cmake_minimum_required(VERSION 3.5)
-project(Umat)
-set(VERSION 0.5.0)
+project($name)
+set(VERSION $version)
 enable_language(Fortran)
 set(SOURCE_FILES mises_umat.f xit.f)
 set(LIBRARY_NAME mises_umat)
@@ -71,6 +71,7 @@ sed -i 's/CALL ROTSIG(/!CALL ROTSIG(/g' gurson_porous_plasticity.f90
 
 if [[ ${nbits} == 64 ]]; then
     export OB=openblas64_
+    export FF="-m64 -fdefault-integer-8"
     sed -i 's/call dgesv(/call dgesv_64(/g' gurson_porous_plasticity.f90
 else
     export OB=openblas
@@ -78,10 +79,10 @@ fi
 
 cat >CMakeLists.txt <<EOL
 cmake_minimum_required(VERSION 3.5)
-project(Umat)
-set(VERSION 0.5.0)
+project($name)
+set(VERSION $version)
 enable_language(Fortran)
-set(CMAKE_Fortran_FLAGS "-fdefault-real-8")
+set(CMAKE_Fortran_FLAGS "-fdefault-real-8 $FF")
 add_library(gurson_porous_plasticity SHARED gurson_porous_plasticity.f90)
 target_link_libraries(gurson_porous_plasticity $OB)
 install(TARGETS gurson_porous_plasticity DESTINATION lib)
