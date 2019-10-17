@@ -25,7 +25,7 @@ sources = [
 
     # Gurson model from UMAT.jl/umat_models
     "https://github.com/JuliaFEM/UMAT.jl.git" =>
-    "6a1b73f93473c3fcd7a82092f7fd3da8c40885e5"
+    "db0046a44b2c8dfd5ca5b3212cbd6fee37f6baa3"
 
 ]
 
@@ -62,11 +62,12 @@ cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=/opt/$target/$target
 make
 make install
 
+################################################################################
 # From this forward is UMAT.jl/umat_models building
+################################################################################
 
 cd UMAT.jl/umat_models
 sed -i 's/CALL ROTSIG(/!CALL ROTSIG(/g' gurson_porous_plasticity.f90
-sed -i "s/'&/\' \&/g" drucker_prager_plasticity_deriv.f90
 
 if [[ ${nbits} == 64 ]]; then
     export OB=openblas64_
