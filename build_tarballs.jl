@@ -81,12 +81,12 @@ cmake_minimum_required(VERSION 3.5)
 project(Umat)
 set(VERSION 0.5.0)
 enable_language(Fortran)
-set(CMAKE_Fortran_FLAGS "-fdefault-real-8 -free")
+set(CMAKE_Fortran_FLAGS "-fdefault-real-8")
 add_library(gurson_porous_plasticity SHARED gurson_porous_plasticity.f90)
 target_link_libraries(gurson_porous_plasticity $OB)
 install(TARGETS gurson_porous_plasticity DESTINATION lib)
 
-add_library(drucker_prager_plasticity SHARED drucker_prager_plasticity.f90 drucker_prager_plasticity_deriv.f90)
+add_library(drucker_prager_plasticity SHARED drucker_prager_plasticity.f90 drucker_prager_plasticity_deriv.f90 ../../xit.f)
 install(TARGETS drucker_prager_plasticity DESTINATION lib)
 EOL
 
